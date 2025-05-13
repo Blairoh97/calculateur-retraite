@@ -3,42 +3,42 @@ document.getElementById('retirementForm').addEventListener('submit', function (e
 
   const age = parseInt(document.getElementById('age').value);
   const retirementAge = parseInt(document.getElementById('retirementAge').value);
-  const annualSavings = parseFloat(document.getElementById('annualSavings').value);
-  const returnRate = parseFloat(document.getElementById('returnRate').value) / 100;
-  const inflationRate = parseFloat(document.getElementById('inflationRate').value) / 100;
   const currentSavings = parseFloat(document.getElementById('currentSavings').value);
+
   const yearsToRetire = retirementAge - age;
+  const annualReturn = 0.04; // rendement annuel fixe de 4 %
+  const inflationRate = 0.02; // inflation annuelle fixe de 2 %
 
   // Croissance de l’épargne
   let futureSavings = currentSavings;
   for (let i = 0; i < yearsToRetire; i++) {
-    futureSavings = (futureSavings + annualSavings) * (1 + returnRate);
+    futureSavings *= (1 + annualReturn);
   }
 
-  // Ajustement selon l’inflation
+  // Ajustement pour l’inflation
   const inflationAdjustment = Math.pow(1 + inflationRate, yearsToRetire);
   const adjustedSavings = futureSavings / inflationAdjustment;
 
-  // Estimation SV (à partir de 65 ans, max env. 8 400 $ en 2025)
+  // Sécurité de la vieillesse (SV)
   let sv = 0;
   if (retirementAge >= 65) {
     sv = 8400;
   } else if (retirementAge >= 60) {
-    sv = 8400 * ((retirementAge - 60) / 5); // Proportionnel, simplifié
+    sv = 8400 * ((retirementAge - 60) / 5);
   }
 
-  // Estimation RRQ (max env. 17 000 $ en 2025 si cotisation complète)
+  // Régime de rentes du Québec (RRQ)
   let rrq = 0;
   if (retirementAge >= 60) {
-    rrq = 17000 * ((retirementAge - 60) / 5); // Simplification progressive
+    rrq = 17000 * ((retirementAge - 60) / 5);
   }
 
-  // Total revenu annuel à la retraite
-  const investmentIncome = adjustedSavings / 25; // Hypothèse : retrait sur 25 ans
+  // Revenu estimé basé sur l’épargne sur 25 ans
+  const investmentIncome = adjustedSavings / 25;
   const totalIncome = investmentIncome + sv + rrq;
 
   document.getElementById('results').innerHTML = `
-    <p><strong>Épargne à la retraite (ajustée à l'inflation) :</strong> ${adjustedSavings.toFixed(2)} $</p>
+    <p><strong>Épargne projetée à la retraite (ajustée à l'inflation) :</strong> ${adjustedSavings.toFixed(2)} $</p>
     <p><strong>Revenu annuel estimé à la retraite :</strong> ${totalIncome.toFixed(2)} $</p>
     <p>(Incluant SV : ${sv.toFixed(0)} $, RRQ : ${rrq.toFixed(0)} $, Épargne : ${investmentIncome.toFixed(2)} $)</p>
   `;
